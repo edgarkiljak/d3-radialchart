@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
+    <script src="https://d3js.org/d3-request.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
+    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+    <!-- Set attr and style by using objects -->
+    <script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-timer.v1.min.js"></script>
+    <script src="https://d3js.org/d3-force.v1.min.js"></script>
+    <style>
+        body, body *{
+            top:0;
+            padding: 0;
+            margin: 0;
+            background-color: black;
+            overflow: hidden;
+            font-family: Lucida Console, Monaco, monospace;
+
+        }
+
+        a {
+             border-radius: 100%;
+            text-decoration: none;
+        }
+        svg {
+            margin-top: 2% ;
+            margin-left: 29%;
+        }
+
+
+        #logo-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        height: 31px;
+        margin-bottom: calc(5% + 50px);
+        max-width: 300px;
+        width: 300px;
+        left: 39%;
+        margin-top: 2% ;
+        }
+
+        .splash-logo {
+        -webkit-transform: translateZ(0);
+        -webkit-transition: .2s ease;
+        height: 31px;
+        max-width: 300px;
+        transform: translateZ(0);
+        transition: .2s ease;
+        width: 300px;
+        }
+
+        @media only screen and (max-width: 600px){
+            svg {
+
+                width: 100%;
+                height: 100%;
+                margin-left: 1% !important;
+                margin-right: 10% !important;
+            }
+        }
+
+        @media (max-width: 767px){
+            .splash-logo-container {
+                margin-bottom: calc(5% + 20px);
+            }
+    </style>
+</head>
+
+<body>
+   <!--  <div id="logo-container">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDI4LjY3IDE0Ni4zMiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwYjNmNTc7fS5jbHMtMntmaWxsOiNmZmEyY2I7fS5jbHMtM3tmaWxsOiNiMGI5Y2E7fS5jbHMtNHtmaWxsOiM4YmRiY2U7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5Bc3NldCAxPC90aXRsZT48ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIj48ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTUwLjE5LjgxSDg2LjM3bDUwLDE0NC4yOUg5Ni4xMmwtOC43NC0yOC4yNUg0OWwtOC41NCwyOC4yNUgwWk04MS4wOSw5MC40NCw2OC4yOCw0NS43Myw1NC44Nyw5MC40NFoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0yODYuNDMsMTQ1LjExVi44MWg1NS40OHExNy44OCwwLDMxLjUsNS42OWE2NS4xNyw2NS4xNywwLDAsMSwyMi43NywxNS40NEE2NC45Miw2NC45MiwwLDAsMSw0MTAsNDQuODFhODIuNzUsODIuNzUsMCwwLDEsNC42OCwyNy45NSw4MS41NSw4MS41NSwwLDAsMS01LjE4LDI5Ljc3LDY0LjUxLDY0LjUxLDAsMCwxLTE0Ljc0LDIyLjc2LDY1Ljg3LDY1Ljg3LDAsMCwxLTIzLDE0LjYzLDgyLjIxLDgyLjIxLDAsMCwxLTI5Ljg3LDUuMThabTg4LTcyLjM1YTQ5LjM1LDQ5LjM1LDAsMCwwLTIuMjMtMTUuMjQsMzQuMTMsMzQuMTMsMCwwLDAtNi40LTExLjc5LDI4Ljg5LDI4Ljg5LDAsMCwwLTEwLjI2LTcuNjIsMzIuODEsMzIuODEsMCwwLDAtMTMuNjItMi43NUgzMjYuMDZ2NzUuMTloMTUuODZhMzIuMzYsMzIuMzYsMCwwLDAsMTMuODItMi44NEEyOC45LDI4LjksMCwwLDAsMzY2LDk5Ljc4YTM0LjgzLDM0LjgzLDAsMCwwLDYuMy0xMkE1MC42LDUwLjYsMCwwLDAsMzc0LjQzLDcyLjc2WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTU5Ny41MS44MWwyNS44MSw2Mi4zOUw2NDkuNzQuODFoNDMuMDhMNjQzLDk3LjM1djQ3Ljc2SDYwMy42MVY5Ni45NEw1NTQuNjMuODFaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNODIyLjcxLDE0NS4xMVYuODFoMzkuNjNWMTEwLjU1aDY1LjQ1djM0LjU1WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTEwOTEuMTUsMTQ1LjExVi44MWgzOS42M1YxNDUuMTFaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTI5NC4zMyw3MS43NGE3MS45Myw3MS45MywwLDAsMSwxOS41MS00OUE3NC4xOSw3NC4xOSwwLDAsMSwxMzM3LDYuM1ExMzUwLjYzLDAsMTM2OC4xLDBxMjAuOTQsMCwzNi4yOCw4LjYzdDIyLjg2LDIyLjg2TDEzOTcsNTNhMjUuNjQsMjUuNjQsMCwwLDAtNS4zOS04Ljc0LDI3LjU1LDI3LjU1LDAsMCwwLTcuNDItNS40OCwzMS44MywzMS44MywwLDAsMC04LjQzLTIuODUsNDYuMDcsNDYuMDcsMCwwLDAtOC40My0uODEsMjkuNjIsMjkuNjIsMCwwLDAtMjQuOSwxMi4wOSwzNy44NSwzNy44NSwwLDAsMC01Ljg5LDEyLjE5QTQ5LjM5LDQ5LjM5LDAsMCwwLDEzMzQuNTcsNzNhNDYuNjQsNDYuNjQsMCwwLDAsMi4yMywxNC40MywzNy41NywzNy41NywwLDAsMCw2LjUxLDEyLjE5LDMxLjY2LDMxLjY2LDAsMCwwLDEwLjQ2LDguNDMsMzAuMTksMzAuMTksMCwwLDAsMTMuOTIsMy4xNSw0MCw0MCwwLDAsMCw4LjM0LS45MSwzMS4zLDMxLjMsMCwwLDAsOC4yMy0zLDI4LDI4LDAsMCwwLDcuMTEtNS40OSwyNC4yNywyNC4yNywwLDAsMCw1LTguMjNsMzIuMzIsMTkuMzFhNDEuMTMsNDEuMTMsMCwwLDEtOS44NiwxNC4yMiw2Mi42Nyw2Mi42NywwLDAsMS0xNSwxMC41Nyw3OS43Nyw3OS43NywwLDAsMS0xOC4wOSw2LjUxLDgzLjMsODMuMywwLDAsMS0xOC44LDIuMjMsNjYuODQsNjYuODQsMCwwLDEtMjkuMzctNi40LDc0LjQxLDc0LjQxLDAsMCwxLTIzLTE3LDc3LjEyLDc3LjEyLDAsMCwxLTE0Ljk0LTI0QTczLjY2LDczLjY2LDAsMCwxLDEyOTQuMzMsNzEuNzRaIi8+PHJlY3QgY2xhc3M9ImNscy0yIiB4PSIxNzUuNzEiIHk9IjUxLjY5IiB3aWR0aD0iNDIuNTQiIGhlaWdodD0iNDIuNTQiLz48cmVjdCBjbGFzcz0iY2xzLTIiIHg9IjExOTEuMTkiIHk9IjUxLjY5IiB3aWR0aD0iNDIuNTQiIGhlaWdodD0iNDIuNTQiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQwNi43MSAtODM1Ljk3KSByb3RhdGUoNDUpIi8+PGNpcmNsZSBjbGFzcz0iY2xzLTMiIGN4PSI1MDEuMDEiIGN5PSI1My44NCIgcj0iNy43NSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTA4LjY3IDM3MC4wNCkgcm90YXRlKC00NSkiLz48Y2lyY2xlIGNsYXNzPSJjbHMtMyIgY3g9IjUyMC4xMyIgY3k9IjcyLjk2IiByPSI3Ljc1IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDAuNzUgMzg5LjE2KSByb3RhdGUoLTQ1KSIvPjxjaXJjbGUgY2xhc3M9ImNscy0zIiBjeD0iNDgxLjkiIGN5PSI3Mi45NiIgcj0iNy43NSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODkuNTUgMzYyLjEyKSByb3RhdGUoLTQ1KSIvPjxjaXJjbGUgY2xhc3M9ImNscy0zIiBjeD0iNTAxLjAxIiBjeT0iOTIuMDgiIHI9IjcuNzUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgxLjYzIDM4MS4yNCkgcm90YXRlKC00NSkiLz48cmVjdCBjbGFzcz0iY2xzLTMiIHg9Ijk3MS4xNSIgeT0iNjguNzQiIHdpZHRoPSI0Mi41NCIgaGVpZ2h0PSI4LjQ1IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5MTkuNDYgMTA2NS4zOCkgcm90YXRlKC05MCkiLz48cmVjdCBjbGFzcz0iY2xzLTMiIHg9Ijk4OC4xNSIgeT0iNjguNzQiIHdpZHRoPSI0Mi41NCIgaGVpZ2h0PSI4LjQ1IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5MzYuNDYgMTA4Mi4zOCkgcm90YXRlKC05MCkiLz48cmVjdCBjbGFzcz0iY2xzLTMiIHg9IjEwMDUuMjQiIHk9IjY4Ljc0IiB3aWR0aD0iNDIuNTQiIGhlaWdodD0iOC40NSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTUzLjU1IDEwOTkuNDcpIHJvdGF0ZSgtOTApIi8+PGNpcmNsZSBjbGFzcz0iY2xzLTQiIGN4PSI3MzYuNTIiIGN5PSI3Mi45NiIgcj0iMjEuMjciLz48L2c+PC9nPjwvc3ZnPg==" class="splash-logo">
+    </div> -->
+        <script type="text/javascript" src="main.js"></script>
+</body>
+
+</html>
